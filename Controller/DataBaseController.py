@@ -7,8 +7,14 @@ from DataBase.Attribute import Attribute
 
 
 class DataBaseController:
+    def _create_db_storage_file(self, file_name: str):
+        file_path = const.resource_path + file_name
+        file = open(file_path + ".db", "a")
+        file.close()
+        return file_path
+
     @staticmethod
-    def create_db(name):
+    def create_db(name: str):
         def create_attr_table(db_path):
             connection = sql.connect(db_path)
             cursor = connection.cursor()
@@ -19,9 +25,8 @@ class DataBaseController:
             """)
             connection.commit()
 
-        file_path = const.resource_path + name
-        file = open(file_path + ".db", "a")
-        file.close()
+        db_controller = DataBaseController()
+        file_path = db_controller._create_db_storage_file(name)
         create_attr_table(file_path+".db")
 
     @staticmethod

@@ -2,7 +2,7 @@ import tkinter as tk
 from Controller.DataBaseController import DataBaseController
 
 
-class CreateDB(tk.Toplevel):
+class DBCreationDialog(tk.Toplevel):
     def __init__(self, root):
         super().__init__(root)
         self.init_child()

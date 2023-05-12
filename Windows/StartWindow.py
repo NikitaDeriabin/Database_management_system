@@ -1,9 +1,8 @@
 import tkinter as tk
 import constants as const
 from Controller.FileReader import FileReader
-from Windows.СreateDB import CreateDB
+from Windows.DBCreationDialog import DBCreationDialog
 from Windows.TablesWindow import TablesWindow
-import os
 import sqlite3 as sql
 
 
@@ -44,7 +43,7 @@ class Main(tk.Frame):
         self.view_db_files()
 
     def open_create_db_dialog(self):
-        CreateDB(self.root)
+        DBCreationDialog(self.root)
 
     def open_selected_db(self):
         selected = self.db_list_box.get(self.db_list_box.curselection())
