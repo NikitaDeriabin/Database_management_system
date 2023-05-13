@@ -14,5 +14,5 @@ class AddRowDialog(BaseRowDialog):
 
             self.destroy()
         except TypeError as type_error:
-            mb.showerror("Error", type_error)
+            mb.showerror("Error", str(type_error))
 

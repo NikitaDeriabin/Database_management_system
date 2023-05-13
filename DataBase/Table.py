@@ -2,8 +2,8 @@
 class Table:
     def __init__(self, name):
         self.name = name
-        self.attributes = list() # возможно dict()
-        self.rows = list() # возможно dict()
+        self.attributes = list()
+        self.rows = list()
 
     def __str__(self):
         return self.name

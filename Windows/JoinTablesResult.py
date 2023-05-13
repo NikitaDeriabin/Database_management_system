@@ -1,15 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
-
-
 from Controller.DataBaseController import DataBaseController
-from DataBase.Attribute import Attribute
 from DataBase.Base import Base
 
 
 class JoinTablesResult(tk.Toplevel):
     def __init__(self, root, db_connection, table1, table2, comm_attr):
         super().__init__(root)
+        self.tree = None
         self.db_connection = db_connection
         self.tbl1 = table1
         self.tbl2 = table2
@@ -30,21 +28,22 @@ class JoinTablesResult(tk.Toplevel):
         table1 = DataBaseController.get_table_data(self.tbl1, self.db_connection)
         table2 = DataBaseController.get_table_data(self.tbl2, self.db_connection)
 
+        columns = self._get_joined_columns(table1, table2)
+
+        self.tree = ttk.Treeview(self, columns=tuple(columns), height=15, show='headings')
+        self._set_columns(columns)
+        self.tree.pack()
+
+    def _get_joined_columns(self, table1, table2):
         columns = [attr.name for attr in table1.attributes]
-        print("column before:", columns)
         columns += list(filter(lambda x: x.lower() != self.comm_attr, [attr.name for attr in table2.attributes]))
-        print("column after:", columns)
-        print()
+        return columns
 
-        self.tree = ttk.Treeview(self, columns=tuple(columns), height=15, show='headings') #show maybe drop
-
+    def _set_columns(self, columns):
         col_width = 950 // len(tuple(columns))
         for col in enumerate(columns):
-            print(col, type(col))
-            self.tree.column('#'+str(col[0] + 1), width=col_width, anchor=tk.CENTER)
-            self.tree.heading('#'+str(col[0] + 1), text=str(col[1]).lower())
-
-        self.tree.pack()
+            self.tree.column('#' + str(col[0] + 1), width=col_width, anchor=tk.CENTER)
+            self.tree.heading('#' + str(col[0] + 1), text=str(col[1]).lower())
 
     def view_records(self):
         [self.tree.delete(i) for i in self.tree.get_children()]

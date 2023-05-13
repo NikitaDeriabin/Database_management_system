@@ -17,18 +17,17 @@ class BaseRowDialog(tk.Toplevel):
 
     def init_child(self):
         self.init_widgets()
-
-        self.frame_btn = tk.Frame(self, height=10, pady=15)
-        self.frame_btn.pack(side=tk.BOTTOM)
-
-        self.btn_cancel = tk.Button(self.frame_btn, text="Cancel", width=20, command=self.cancel)
-        self.btn_cancel.pack(side=tk.LEFT, padx=10)
-
-        self.btn_submit = tk.Button(self.frame_btn, text="Submit", width=20, command=self.submit)
-        self.btn_submit.pack(side=tk.RIGHT)
-
+        self._add_dialog_elements()
         self.grab_set()
         self.focus_set()
+
+    def _add_dialog_elements(self):
+        self.frame_btn = tk.Frame(self, height=10, pady=15)
+        self.frame_btn.pack(side=tk.BOTTOM)
+        self.btn_cancel = tk.Button(self.frame_btn, text="Cancel", width=20, command=self.cancel)
+        self.btn_cancel.pack(side=tk.LEFT, padx=10)
+        self.btn_submit = tk.Button(self.frame_btn, text="Submit", width=20, command=self.submit)
+        self.btn_submit.pack(side=tk.RIGHT)
 
     def init_widgets(self):
         for attr in self.table.attributes:

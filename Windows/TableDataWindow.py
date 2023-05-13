@@ -6,51 +6,45 @@ from Windows.AddRowDialog import AddRowDialog
 from Windows.ChangeRowDialog import ChangeRowDialog
 from DataBase.Attribute import Attribute
 
-import sqlite3
-
 
 class TableDataWindow(tk.Toplevel):
     def __init__(self, root, table_name, db_connection):
         super().__init__(root)
+        self.tree = None
         self.root = root
         self.db_connection = db_connection
         self.table_name = table_name
         self.cursor = db_connection.cursor()
         self.table = DataBaseController.get_table_data(table_name, db_connection)
         self.init_child()
-        self.view_records()
+        self.display_records()
 
     def init_child(self):
+        self._render_window()
+        self.init_tree()
+        self.grab_set()
+        self.focus_set()
+
+    def _render_window(self):
         self.title("Table: " + self.table_name)
         self.geometry('850x650+200+50')
         self.resizable(False, False)
-
         toolbar = tk.Frame(self, bg=const.toolbar_bg, bd=10)
         toolbar.pack(side=tk.TOP, fill=tk.X)
-
         btn_add_row = tk.Button(toolbar, text='Add row', command=self.open_add_row_dialog, bd=1,
-                                     compound=tk.TOP)
-
+                                compound=tk.TOP)
         btn_add_row.grid(row=0, column=0, ipadx=10, padx=10)
-
         btn_change_row = tk.Button(toolbar, text='Change row', command=self.open_change_row_dialog,
-                                     bd=1, compound=tk.TOP)
+                                   bd=1, compound=tk.TOP)
         btn_change_row.grid(row=0, column=1, ipadx=10, padx=10)
-
         btn_delete_row = tk.Button(toolbar, text='Delete row', command=self.delete_selected_row,
-                                     bd=1, compound=tk.TOP)
+                                   bd=1, compound=tk.TOP)
         btn_delete_row.grid(row=0, column=2, ipadx=10, padx=10)
-
         btn_refresh_table = tk.Button(toolbar, text='Refresh', command=self.refresh_table,
                                       bd=1, compound=tk.TOP)
         btn_refresh_table.grid(row=0, column=3, ipadx=10, padx=10)
 
-        self.init_tree()
-
-        self.grab_set()
-        self.focus_set()
-
-    def view_records(self):
+    def display_records(self):
         self.cursor.execute("""SELECT * FROM """ + self.table.name)
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.cursor.fetchall()]
@@ -71,16 +65,18 @@ class TableDataWindow(tk.Toplevel):
         self.refresh_table()
 
     def refresh_table(self):
-        self.view_records()
+        self.display_records()
 
     def init_tree(self):
-        attr = Attribute(name="id", data_type="int", table_name=self.table.name)
-        columns = [attr] + [attr.name for attr in self.table.attributes]
-        self.tree = ttk.Treeview(self, columns=tuple(columns), height=15, show='headings') #show maybe drop
+        id_attr = Attribute(name="id", data_type="int", table_name=self.table.name)
+        columns = [str(id_attr)] + [str(attr.name) for attr in self.table.attributes]
+        self.tree = ttk.Treeview(self, columns=tuple(columns), height=15, show='headings')
 
+        self._set_columns(columns)
+        self.tree.pack()
+
+    def _set_columns(self, columns):
         col_width = 850 // len(columns)
         for col in columns:
             self.tree.column(col, width=col_width, anchor=tk.CENTER)
             self.tree.heading(col, text=col)
-
-        self.tree.pack()
