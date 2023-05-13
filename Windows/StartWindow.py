@@ -9,10 +9,11 @@ import sqlite3 as sql
 class Main(tk.Frame):
     def __init__(self, root):
         super().__init__(root)
+        self.db_list_box = None
         self.root = root
         self.init_main()
 
-    def init_main(self):
+    def _render_window(self):
         toolbar = tk.Frame(bg=const.toolbar_bg, bd=10)
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
@@ -30,9 +31,8 @@ class Main(tk.Frame):
         btn_delete_db.grid(row=0, column=2, ipadx=10, padx=10)
 
         btn_refresh_db = tk.Button(toolbar, text='Refresh', command=self.refresh_db,
-                                  bd=1, compound=tk.TOP)
+                                   bd=1, compound=tk.TOP)
         btn_refresh_db.grid(row=0, column=3, ipadx=10, padx=10)
-
 
         scrollbar = tk.Scrollbar(self.root)
         self.db_list_box = tk.Listbox(self.root, yscrollcommand=scrollbar.set, height=15, width=103)
@@ -40,6 +40,8 @@ class Main(tk.Frame):
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         scrollbar.config(command=self.db_list_box.yview)
 
+    def init_main(self):
+        self._render_window()
         self.view_db_files()
 
     def open_create_db_dialog(self):
