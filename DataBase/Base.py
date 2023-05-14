@@ -7,7 +7,7 @@ class Base:
     def __init__(self, db_connection):
         self.db_connection = db_connection
         self.tables = list()
-        self.name_pos_table = dict() # словарь имен таблиц и их позиций в списке tables
+        self.name_pos_table = dict() # a dictionary of table names and their positions in the self.tables list
 
     def get_common_attrs(self, table1, table2):
         tbl1_attrs = []
@@ -21,16 +21,11 @@ class Base:
         for row in rows:
             tbl1_attrs.append(row[1].lower())
 
-        # print("table1:", tbl1_attrs)
-
         cursor.execute("SELECT * FROM " + const.attr_table + " WHERE " + const.attr_table_name
                        + " = " + "?" + ";", (table2,))
         rows = cursor.fetchall()
         for row in rows:
             tbl2_attrs.append(row[1].lower())
-
-        # print("table2:", tbl2_attrs)
-        # print()
 
         return list(set(tbl1_attrs) & set(tbl2_attrs))
 

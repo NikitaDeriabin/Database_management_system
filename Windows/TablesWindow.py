@@ -3,9 +3,10 @@ import constants as const
 from Windows.CreateTableDialog import CreateTableDialog
 from Windows.TableDataWindow import TableDataWindow
 from Windows.JoinTablesDialog import JoinTablesDialog
+from Windows.BaseWindow import BaseWindow
 
 
-class TablesWindow(tk.Toplevel):
+class TablesWindow(tk.Toplevel, BaseWindow):
     def __init__(self, root, db_name, db_connection):
         super().__init__(root)
         self.tables = None
@@ -54,11 +55,14 @@ class TablesWindow(tk.Toplevel):
         CreateTableDialog(self.root, self.db_connection, self.refresh)
 
     def open_selected_table(self):
-        selected = self.table_list_box.get(self.table_list_box.curselection())
+        selected = self._get_selected_item()
         TableDataWindow(self.root, selected, self.db_connection)
 
+    def _get_selected_item(self):
+        return self.table_list_box.get(self.table_list_box.curselection())
+
     def delete_selected_table(self):
-        selected = self.table_list_box.get(self.table_list_box.curselection())
+        selected = self._get_selected_item()
         self.cursor.execute("""DROP TABLE IF EXISTS """ + selected)
         self.cursor.execute("""DELETE FROM """ + const.attr_table + " WHERE " +
                             const.attr_table_name + " = " + "?" + ";", (selected,))

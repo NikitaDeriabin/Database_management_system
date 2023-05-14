@@ -5,9 +5,9 @@ from Controller.DataBaseController import DataBaseController
 from Windows.AddRowDialog import AddRowDialog
 from Windows.ChangeRowDialog import ChangeRowDialog
 from DataBase.Attribute import Attribute
+from Windows.BaseWindow import BaseWindow
 
-
-class TableDataWindow(tk.Toplevel):
+class TableDataWindow(tk.Toplevel, BaseWindow):
     def __init__(self, root, table_name, db_connection):
         super().__init__(root)
         self.tree = None
@@ -40,7 +40,7 @@ class TableDataWindow(tk.Toplevel):
         btn_delete_row = tk.Button(toolbar, text='Delete row', command=self.delete_selected_row,
                                    bd=1, compound=tk.TOP)
         btn_delete_row.grid(row=0, column=2, ipadx=10, padx=10)
-        btn_refresh_table = tk.Button(toolbar, text='Refresh', command=self.refresh_table,
+        btn_refresh_table = tk.Button(toolbar, text='Refresh', command=self.refresh,
                                       bd=1, compound=tk.TOP)
         btn_refresh_table.grid(row=0, column=3, ipadx=10, padx=10)
 
@@ -62,9 +62,9 @@ class TableDataWindow(tk.Toplevel):
             selected_row_id.append(self.tree.set(selected_item, '#1'))
         DataBaseController.delete_row(self.db_connection, self.table, tuple(selected_row_id))
 
-        self.refresh_table()
+        self.refresh()
 
-    def refresh_table(self):
+    def refresh(self):
         self.display_records()
 
     def init_tree(self):

@@ -1,10 +1,10 @@
 import tkinter as tk
-from abc import abstractmethod
 from DataBase.Row import Row
 from DataBase.Cell import Cell
-from Controller.DataBaseController import DataBaseController
+from abc import ABC, abstractmethod
 
-class BaseRowDialog(tk.Toplevel):
+
+class BaseRowDialog(tk.Toplevel, ABC):
     def __init__(self, root, db_connection, table):
         super().__init__(root)
         self.root = root

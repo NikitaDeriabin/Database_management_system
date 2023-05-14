@@ -1,5 +1,5 @@
-import tkinter as tk
 from Windows.StartWindow import *
+from Windows import BaseRowDialog
 
 if __name__ == "__main__":
     root = tk.Tk()

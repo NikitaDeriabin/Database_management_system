@@ -7,6 +7,10 @@ from DataBase.Attribute import Attribute
 
 
 class DataBaseController:
+
+    @staticmethod
+    def init_connection(path):
+        return sql.connect(path)
     def _create_db_storage_file(self, file_name: str):
         file_path = const.resource_path + file_name
         file = open(file_path + ".db", "a")

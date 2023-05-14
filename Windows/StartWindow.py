@@ -3,10 +3,11 @@ import constants as const
 from Controller.FileReader import FileReader
 from Windows.DBCreationDialog import DBCreationDialog
 from Windows.TablesWindow import TablesWindow
-import sqlite3 as sql
+from Windows.BaseWindow import BaseWindow
+from Controller.DataBaseController import DataBaseController
 
 
-class Main(tk.Frame):
+class Main(tk.Frame, BaseWindow):
     def __init__(self, root):
         super().__init__(root)
         self.db_list_box = None
@@ -30,7 +31,7 @@ class Main(tk.Frame):
                                   bd=1, compound=tk.TOP)
         btn_delete_db.grid(row=0, column=2, ipadx=10, padx=10)
 
-        btn_refresh_db = tk.Button(toolbar, text='Refresh', command=self.refresh_db,
+        btn_refresh_db = tk.Button(toolbar, text='Refresh', command=self.refresh,
                                    bd=1, compound=tk.TOP)
         btn_refresh_db.grid(row=0, column=3, ipadx=10, padx=10)
 
@@ -42,28 +43,31 @@ class Main(tk.Frame):
 
     def init_main(self):
         self._render_window()
-        self.view_db_files()
+        self.display_db_files()
 
     def open_create_db_dialog(self):
         DBCreationDialog(self.root)
 
     def open_selected_db(self):
-        selected = self.db_list_box.get(self.db_list_box.curselection())
+        selected = self._get_selected_item()
         db_name = selected[:-3]
         path = const.resource_path + selected
-        connection = sql.connect(path)
+        connection = DataBaseController.init_connection(path)
         TablesWindow(self.root, db_name=db_name, db_connection=connection)
 
-    def refresh_db(self):
-        self.view_db_files()
+    def _get_selected_item(self):
+        return self.db_list_box.get(self.db_list_box.curselection())
+
+    def refresh(self):
+        self.display_db_files()
 
     def delete_selected_db(self):
-        selected = self.db_list_box.get(self.db_list_box.curselection())
+        selected = self._get_selected_item()
         path = const.resource_path + selected
         FileReader.delete_db_file(path)
-        self.view_db_files()
+        self.display_db_files()
 
-    def view_db_files(self):
+    def display_db_files(self):
         self.db_list_box.delete(0, tk.END)
         file_names = FileReader.get_db_file_names()
         for i in file_names:
