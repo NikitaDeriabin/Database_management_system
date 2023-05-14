@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from Controller.DataBaseController import DataBaseController
+from Controller.DatabaseController import DatabaseController
 from DataBase.Base import Base
 
 
@@ -25,8 +25,8 @@ class JoinTablesResult(tk.Toplevel):
         self.focus_set()
 
     def init_tree(self):
-        table1 = DataBaseController.get_table_data(self.tbl1, self.db_connection)
-        table2 = DataBaseController.get_table_data(self.tbl2, self.db_connection)
+        table1 = DatabaseController.get_table_data(self.tbl1, self.db_connection)
+        table2 = DatabaseController.get_table_data(self.tbl2, self.db_connection)
 
         columns = self._get_joined_columns(table1, table2)
 

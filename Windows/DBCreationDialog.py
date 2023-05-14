@@ -1,5 +1,5 @@
 import tkinter as tk
-from Controller.DataBaseController import DataBaseController
+from Controller.DatabaseController import DatabaseController
 
 
 class DBCreationDialog(tk.Toplevel):
@@ -25,7 +25,7 @@ class DBCreationDialog(tk.Toplevel):
         btn_cancel.grid(row=0, column=3, padx="10", pady="10")
 
     def submit(self):
-        DataBaseController.create_db(self.entry_name.get())
+        DatabaseController.create_db(self.entry_name.get())
         self.destroy()
 
     def cancel(self):

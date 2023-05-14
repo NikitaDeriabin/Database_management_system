@@ -1,5 +1,5 @@
 from Windows.BaseRowDialog import BaseRowDialog
-from Controller.DataBaseController import DataBaseController
+from Controller.DatabaseController import DatabaseController
 from tkinter import messagebox as mb
 
 
@@ -24,7 +24,7 @@ class ChangeRowDialog(BaseRowDialog):
     def submit(self):
         try:
             row = self.get_data_from_widgets()
-            DataBaseController.update_row(db_connection=self.db_connection,
+            DatabaseController.update_row(db_connection=self.db_connection,
                                           table=self.table, row=row, row_id=self.row_id)
             self.destroy()
         except TypeError as type_error:

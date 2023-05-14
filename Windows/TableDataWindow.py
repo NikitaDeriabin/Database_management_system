@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import constants as const
-from Controller.DataBaseController import DataBaseController
+from Controller.DatabaseController import DatabaseController
 from Windows.AddRowDialog import AddRowDialog
 from Windows.ChangeRowDialog import ChangeRowDialog
 from DataBase.Attribute import Attribute
@@ -15,7 +15,7 @@ class TableDataWindow(tk.Toplevel, BaseWindow):
         self.db_connection = db_connection
         self.table_name = table_name
         self.cursor = db_connection.cursor()
-        self.table = DataBaseController.get_table_data(table_name, db_connection)
+        self.table = DatabaseController.get_table_data(table_name, db_connection)
         self.init_child()
         self.display_records()
 
@@ -60,7 +60,7 @@ class TableDataWindow(tk.Toplevel, BaseWindow):
         selected_row_id = []
         for selected_item in self.tree.selection():
             selected_row_id.append(self.tree.set(selected_item, '#1'))
-        DataBaseController.delete_row(self.db_connection, self.table, tuple(selected_row_id))
+        DatabaseController.delete_row(self.db_connection, self.table, tuple(selected_row_id))
 
         self.refresh()
 

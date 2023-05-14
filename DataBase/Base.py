@@ -1,4 +1,4 @@
-from Controller.DataBaseController import DataBaseController
+from Controller.DatabaseController import DatabaseController
 from DataBase.Table import Table
 import constants as const
 
@@ -41,8 +41,8 @@ class Base:
 
             return result_row
 
-        table1 = DataBaseController.get_records(tbl1, self.db_connection)
-        table2 = DataBaseController.get_records(tbl2, self.db_connection)
+        table1 = DatabaseController.get_records(tbl1, self.db_connection)
+        table2 = DatabaseController.get_records(tbl2, self.db_connection)
 
         table1_comm_attr_values = set()
         for row in table1.rows:

@@ -4,7 +4,7 @@ from Controller.FileReader import FileReader
 from Windows.DBCreationDialog import DBCreationDialog
 from Windows.TablesWindow import TablesWindow
 from Windows.BaseWindow import BaseWindow
-from Controller.DataBaseController import DataBaseController
+from Controller.DatabaseController import DatabaseController
 
 
 class Main(tk.Frame, BaseWindow):
@@ -52,7 +52,7 @@ class Main(tk.Frame, BaseWindow):
         selected = self._get_selected_item()
         db_name = selected[:-3]
         path = const.resource_path + selected
-        connection = DataBaseController.init_connection(path)
+        connection = DatabaseController.init_connection(path)
         TablesWindow(self.root, db_name=db_name, db_connection=connection)
 
     def _get_selected_item(self):

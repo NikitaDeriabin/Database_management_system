@@ -1,6 +1,6 @@
 import unittest
 import sqlite3
-from Controller.DataBaseController import DataBaseController
+from Controller.DatabaseController import DatabaseController
 import constants as const
 from DataBase.Base import Base
 from DataBase.DataTypes import DataType
@@ -13,7 +13,7 @@ def setUp(self):
     except:
         pass
 
-    DataBaseController.create_db("test")
+    DatabaseController.create_db("test")
 
     self.db_connection = sqlite3.connect(const.resource_path + 'test.db')
     cursor = self.db_connection.cursor()

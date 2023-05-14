@@ -6,7 +6,7 @@ from DataBase.Cell import Cell
 from DataBase.Attribute import Attribute
 
 
-class DataBaseController:
+class DatabaseController:
 
     @staticmethod
     def init_connection(path):
@@ -29,7 +29,7 @@ class DataBaseController:
             """)
             connection.commit()
 
-        db_controller = DataBaseController()
+        db_controller = DatabaseController()
         file_path = db_controller._create_db_storage_file(name)
         create_attr_table(file_path+".db")
 
@@ -49,7 +49,7 @@ class DataBaseController:
 
     @staticmethod
     def get_records(tb_name, db_connection):
-        table = DataBaseController.get_table_data(tb_name, db_connection)
+        table = DatabaseController.get_table_data(tb_name, db_connection)
         cursor = db_connection.cursor()
         cursor.execute("SELECT * FROM " + tb_name + ";")
         table_records = cursor.fetchall()
