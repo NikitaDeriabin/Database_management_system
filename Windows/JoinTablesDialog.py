@@ -14,12 +14,11 @@ class JoinTablesDialog(tk.Toplevel):
         self.init_child()
 
     def init_child(self):
-        self._render_window()
-
+        self._render_dialog()
         self.grab_set()
         self.focus_set()
 
-    def _render_window(self):
+    def _render_dialog(self):
         frame_frs_tbl = tk.LabelFrame(self, text="First table", padx=30, pady=10)
         frame_frs_tbl.pack(padx=10, pady=5)
         frame_scn_tbl = tk.LabelFrame(self, text="Second table", padx=50, pady=10)

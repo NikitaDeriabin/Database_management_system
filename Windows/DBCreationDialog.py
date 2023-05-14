@@ -8,11 +8,11 @@ class DBCreationDialog(tk.Toplevel):
         self.init_child()
 
     def init_child(self):
-        self._render_window()
+        self._render_dialog()
         self.grab_set()
         self.focus_set()
 
-    def _render_window(self):
+    def _render_dialog(self):
         self.title("Creating database")
         self.geometry('400x50+400+300')
         self.resizable(False, False)

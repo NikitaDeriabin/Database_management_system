@@ -42,8 +42,9 @@ class JoinTablesResult(tk.Toplevel):
     def _set_columns(self, columns):
         col_width = 950 // len(tuple(columns))
         for col in enumerate(columns):
-            self.tree.column('#' + str(col[0] + 1), width=col_width, anchor=tk.CENTER)
-            self.tree.heading('#' + str(col[0] + 1), text=str(col[1]).lower())
+            temp_col = '#' + str(col[0] + 1)
+            self.tree.column(temp_col, width=col_width, anchor=tk.CENTER)
+            self.tree.heading(temp_col, text=str(col[1]).lower())
 
     def view_records(self):
         [self.tree.delete(i) for i in self.tree.get_children()]
