@@ -7,14 +7,13 @@ from Windows.BaseWindow import BaseWindow
 
 
 class TablesWindow(tk.Toplevel, BaseWindow):
-    def __init__(self, root, db_name, db_connection):
+    def __init__(self, root, db_name, db_controller):
         super().__init__(root)
         self.tables = None
         self.table_list_box = None
         self.root = root
-        self.db_connection = db_connection
+        self.db_controller = db_controller
         self.db_name = db_name
-        self.cursor = db_connection.cursor()
         self.init_child()
 
     def init_child(self):
@@ -52,21 +51,21 @@ class TablesWindow(tk.Toplevel, BaseWindow):
         scrollbar.config(command=self.table_list_box.yview)
 
     def open_create_table_dialog(self):
-        CreateTableDialog(self.root, self.db_connection, self.refresh)
+        CreateTableDialog(self.root, self.db_controller, self.refresh)
 
     def open_selected_table(self):
         selected = self._get_selected_item()
-        TableDataWindow(self.root, selected, self.db_connection)
+        TableDataWindow(self.root, selected, self.db_controller)
 
     def _get_selected_item(self):
         return self.table_list_box.get(self.table_list_box.curselection())
 
     def delete_selected_table(self):
         selected = self._get_selected_item()
-        self.cursor.execute("""DROP TABLE IF EXISTS """ + selected)
-        self.cursor.execute("""DELETE FROM """ + const.attr_table + " WHERE " +
+        self.db_controller.cursor.execute("""DROP TABLE IF EXISTS """ + selected)
+        self.db_controller.cursor.execute("""DELETE FROM """ + const.attr_table + " WHERE " +
                             const.attr_table_name + " = " + "?" + ";", (selected,))
-        self.db_connection.commit()
+        self.db_controller.connection.commit()
         self.refresh()
 
     def refresh(self):
@@ -74,13 +73,13 @@ class TablesWindow(tk.Toplevel, BaseWindow):
 
     def display_tables(self):
         self.table_list_box.delete(0, tk.END)
-        self.cursor.execute("""SELECT * FROM sqlite_master WHERE type='table'""")
-        self.tables = self.cursor.fetchall()
+        self.db_controller.cursor.execute("""SELECT * FROM sqlite_master WHERE type='table'""")
+        self.tables = self.db_controller.cursor.fetchall()
         for tb in self.tables:
             if tb[1] != const.attr_table:
                 self.table_list_box.insert(tk.END, tb[1]) #tb[1] - name of table
 
     def join_tables(self):
-        JoinTablesDialog(self.root, self.db_connection,
+        JoinTablesDialog(self.root, self.db_controller,
                          list(map(lambda x: x[1], filter(lambda x: x[1] != const.attr_table, self.tables))))
 

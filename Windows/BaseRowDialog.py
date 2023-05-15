@@ -5,12 +5,11 @@ from abc import ABC, abstractmethod
 
 
 class BaseRowDialog(tk.Toplevel, ABC):
-    def __init__(self, root, db_connection, table):
+    def __init__(self, root, db_controller, table):
         super().__init__(root)
         self.root = root
         self.table = table
-        self.db_connection = db_connection
-        self.cursor = db_connection.cursor()
+        self.db_controller = db_controller
         self.widgets = []
         self.frames = []
         self.init_child()

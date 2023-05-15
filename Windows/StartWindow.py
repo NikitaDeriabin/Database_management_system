@@ -1,6 +1,6 @@
 import tkinter as tk
 import constants as const
-from Controller.FileReader import FileReader
+from Controller.FileController import FileController
 from Windows.DBCreationDialog import DBCreationDialog
 from Windows.TablesWindow import TablesWindow
 from Windows.BaseWindow import BaseWindow
@@ -52,8 +52,8 @@ class Main(tk.Frame, BaseWindow):
         selected = self._get_selected_item()
         db_name = selected[:-3]
         path = const.resource_path + selected
-        connection = DatabaseController.init_connection(path)
-        TablesWindow(self.root, db_name=db_name, db_connection=connection)
+        db_controller = DatabaseController(path=path)
+        TablesWindow(self.root, db_name=db_name, db_controller=db_controller)
 
     def _get_selected_item(self):
         return self.db_list_box.get(self.db_list_box.curselection())
@@ -64,11 +64,11 @@ class Main(tk.Frame, BaseWindow):
     def delete_selected_db(self):
         selected = self._get_selected_item()
         path = const.resource_path + selected
-        FileReader.delete_db_file(path)
+        FileController.delete_db_file(path)
         self.display_db_files()
 
     def display_db_files(self):
         self.db_list_box.delete(0, tk.END)
-        file_names = FileReader.get_db_file_names()
+        file_names = FileController.get_db_file_names()
         for i in file_names:
             self.db_list_box.insert(tk.END, i)

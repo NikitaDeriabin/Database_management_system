@@ -1,21 +1,19 @@
 import tkinter as tk
 from tkinter import ttk
 import constants as const
-from Controller.DatabaseController import DatabaseController
 from Windows.AddRowDialog import AddRowDialog
 from Windows.ChangeRowDialog import ChangeRowDialog
 from DataBase.Attribute import Attribute
 from Windows.BaseWindow import BaseWindow
 
 class TableDataWindow(tk.Toplevel, BaseWindow):
-    def __init__(self, root, table_name, db_connection):
+    def __init__(self, root, table_name, db_controller):
         super().__init__(root)
         self.tree = None
         self.root = root
-        self.db_connection = db_connection
+        self.db_controller = db_controller
         self.table_name = table_name
-        self.cursor = db_connection.cursor()
-        self.table = DatabaseController.get_table_data(table_name, db_connection)
+        self.table = self.db_controller.get_table_data(table_name)
         self.init_child()
         self.display_records()
 
@@ -45,22 +43,22 @@ class TableDataWindow(tk.Toplevel, BaseWindow):
         btn_refresh_table.grid(row=0, column=3, ipadx=10, padx=10)
 
     def display_records(self):
-        self.cursor.execute("""SELECT * FROM """ + self.table.name)
+        self.db_controller.cursor.execute("""SELECT * FROM """ + self.table.name)
         [self.tree.delete(i) for i in self.tree.get_children()]
-        [self.tree.insert('', 'end', values=row) for row in self.cursor.fetchall()]
+        [self.tree.insert('', 'end', values=row) for row in self.db_controller.cursor.fetchall()]
 
     def open_add_row_dialog(self):
-        AddRowDialog(self.root, self.db_connection, self.table)
+        AddRowDialog(self.root, self.db_controller, self.table)
 
     def open_change_row_dialog(self):
         row_id = self.tree.set(self.tree.selection()[0], "#1")
-        ChangeRowDialog(self.root, self.db_connection, self.table, row_id)
+        ChangeRowDialog(self.root, self.db_controller, self.table, row_id)
 
     def delete_selected_row(self):
         selected_row_id = []
         for selected_item in self.tree.selection():
             selected_row_id.append(self.tree.set(selected_item, '#1'))
-        DatabaseController.delete_row(self.db_connection, self.table, tuple(selected_row_id))
+        self.db_controller.delete_row(self.table, tuple(selected_row_id))
 
         self.refresh()
 

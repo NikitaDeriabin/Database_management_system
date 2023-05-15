@@ -8,11 +8,10 @@ from tkinter import messagebox as mb
 
 
 class CreateTableDialog(tk.Toplevel):
-    def __init__(self, root, db_connection, refresh_tables_method):
+    def __init__(self, root, db_controller, refresh_tables_method):
         super().__init__(root)
         self.root = root
-        self.db_connection = db_connection
-        self.cursor = db_connection.cursor()
+        self.db_controller = db_controller
         self.widgets = []
         self.frames = []
         self.refresh_tables_method = refresh_tables_method
@@ -51,7 +50,7 @@ class CreateTableDialog(tk.Toplevel):
             table = Table(self.entry_table_name.get())
             self._create_table(table)
             self._save_attrs(table)
-            self.db_connection.commit()
+            self.db_controller.connection.commit()
             self.refresh_tables_method()
             self.destroy()
 
@@ -64,7 +63,7 @@ class CreateTableDialog(tk.Toplevel):
         """
 
         for attr in table.attributes:
-            self.cursor.execute("""INSERT INTO """ + const.attr_table + " (" + \
+            self.db_controller.cursor.execute("""INSERT INTO """ + const.attr_table + " (" + \
                                 const.attr_table_name + ", " + const.attr_table_column_name + ", " + \
                                 const.attr_table_type + ")" + " VALUES (?, ?, ?)",
                                 (attr.table_name, attr.name, attr.type))
@@ -86,7 +85,7 @@ class CreateTableDialog(tk.Toplevel):
         if not self._check_for_same_attr(table.attributes):
             raise Exception("There are common fields!")
 
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS """ + table.name.replace(' ', '') + attr_str)
+        self.db_controller.cursor.execute("""CREATE TABLE IF NOT EXISTS """ + table.name.replace(' ', '') + attr_str)
 
     def cancel(self):
         self.destroy()

@@ -1,14 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
-from Controller.DatabaseController import DatabaseController
 from DataBase.Base import Base
 
 
 class JoinTablesResult(tk.Toplevel):
-    def __init__(self, root, db_connection, table1, table2, comm_attr):
+    def __init__(self, root, db_controller, table1, table2, comm_attr):
         super().__init__(root)
         self.tree = None
-        self.db_connection = db_connection
+        self.db_controller = db_controller
         self.tbl1 = table1
         self.tbl2 = table2
         self.comm_attr = comm_attr
@@ -25,8 +24,8 @@ class JoinTablesResult(tk.Toplevel):
         self.focus_set()
 
     def init_tree(self):
-        table1 = DatabaseController.get_table_data(self.tbl1, self.db_connection)
-        table2 = DatabaseController.get_table_data(self.tbl2, self.db_connection)
+        table1 = self.db_controller.get_table_data(self.tbl1)
+        table2 = self.db_controller.get_table_data(self.tbl2)
 
         columns = self._get_joined_columns(table1, table2)
 
@@ -49,7 +48,7 @@ class JoinTablesResult(tk.Toplevel):
     def view_records(self):
         [self.tree.delete(i) for i in self.tree.get_children()]
 
-        db = Base(self.db_connection)
+        db = Base(self.db_controller)
         table = db.get_join_table(self.comm_attr, self.tbl1, self.tbl2)
         for row in table.rows:
             self.tree.insert('', 'end', values=tuple(row))

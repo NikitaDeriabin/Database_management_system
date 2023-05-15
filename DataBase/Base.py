@@ -1,18 +1,17 @@
-from Controller.DatabaseController import DatabaseController
 from DataBase.Table import Table
 import constants as const
 
 
 class Base:
-    def __init__(self, db_connection):
-        self.db_connection = db_connection
+    def __init__(self, db_controller):
+        self.db_controller = db_controller
         self.tables = list()
         self.name_pos_table = dict() # a dictionary of table names and their positions in the self.tables list
 
     def get_common_attrs(self, table1, table2):
         tbl1_attrs = []
         tbl2_attrs = []
-        cursor = self.db_connection.cursor()
+        cursor = self.db_controller.cursor
 
         cursor.execute("SELECT * FROM " + const.attr_table + " WHERE " + const.attr_table_name
                        + " = " + "?" + ";", (table1,))
@@ -41,8 +40,8 @@ class Base:
 
             return result_row
 
-        table1 = DatabaseController.get_records(tbl1, self.db_connection)
-        table2 = DatabaseController.get_records(tbl2, self.db_connection)
+        table1 = self.db_controller.get_records(tbl1)
+        table2 = self.db_controller.get_records(tbl2)
 
         table1_comm_attr_values = set()
         for row in table1.rows:

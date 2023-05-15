@@ -6,10 +6,10 @@ from Windows.JoinTablesResult import JoinTablesResult
 
 
 class JoinTablesDialog(tk.Toplevel):
-    def __init__(self, root, db_connection, tables):
+    def __init__(self, root, db_controller, tables):
         super().__init__(root)
         self.root = root
-        self.db_connection = db_connection
+        self.db_controller = db_controller
         self.tables = tables
         self.init_child()
 
@@ -44,7 +44,7 @@ class JoinTablesDialog(tk.Toplevel):
             if not self.box_frs_table.get() or not self.box_scn_table.get():
                 raise Exception("Choose tables!")
 
-            db = Base(self.db_connection)
+            db = Base(self.db_controller)
             self.box_attr['values'] = db.get_common_attrs(self.box_frs_table.get(), self.box_scn_table.get())
 
         except Exception as e:
@@ -55,7 +55,7 @@ class JoinTablesDialog(tk.Toplevel):
         if not self.box_attr.get():
             mb.showerror("Error", "Choose common column!")
         else:
-            JoinTablesResult(self.root, self.db_connection, self.box_frs_table.get(),
+            JoinTablesResult(self.root, self.db_controller, self.box_frs_table.get(),
                              self.box_scn_table.get(), self.box_attr.get())
 
     def cancel(self):
