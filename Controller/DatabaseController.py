@@ -54,6 +54,18 @@ class DatabaseController(metaclass=Singleton):
         file_path = DatabaseController._create_db_storage_file(name)
         create_attr_table(file_path+".db")
 
+    def create_table(self, table_name, attr_str):
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS """ + table_name + attr_str)
+
+    def get_tables(self):
+        self.cursor.execute("""SELECT * FROM sqlite_master WHERE type='table'""")
+        return self.cursor.fetchall()
+
+    def remove_table(self, table_name):
+        self.cursor.execute("""DROP TABLE IF EXISTS """ + table_name)
+        self.cursor.execute("""DELETE FROM """ + const.attr_table + " WHERE " +
+                                          const.attr_table_name + " = " + "?" + ";", (table_name,))
+        self.connection.commit()
 
     def get_table_data(self, tb_name):
         table = Table(tb_name)
@@ -87,6 +99,12 @@ class DatabaseController(metaclass=Singleton):
 
         return table
 
+    def insert_attrs_to_attr_table(self, attr):
+        self.cursor.execute("""INSERT INTO """ + const.attr_table + " (" + \
+                                          const.attr_table_name + ", " + const.attr_table_column_name + ", " + \
+                                          const.attr_table_type + ")" + " VALUES (?, ?, ?)",
+                                          (attr.table_name, attr.name, attr.type))
+
     def insert_row(self, table, row):
         request_str = "INSERT INTO " + table.name + " ("
         for cell in row.cells:
@@ -98,8 +116,7 @@ class DatabaseController(metaclass=Singleton):
 
         insert_values = tuple([cell.val for cell in row.cells])
 
-        self.cursor.execute(request_str, insert_values)
-        self.connection.commit()
+        self._execute_row_query(insert_values, request_str)
 
     def update_row(self, table, row, row_id):
         request_str = "UPDATE " + table.name + " SET "
@@ -110,8 +127,20 @@ class DatabaseController(metaclass=Singleton):
 
         insert_values = tuple([cell.val for cell in row.cells] + [row_id])
 
+        self._execute_row_query(insert_values, request_str)
+
+    def _execute_row_query(self, insert_values, request_str):
         self.cursor.execute(request_str, insert_values)
         self.connection.commit()
+
+    def get_rows(self, table_name):
+        self.cursor.execute("""SELECT * FROM """ + table_name)
+        return self.cursor.fetchall()
+
+    def get_row_by_id(self, table_name, id):
+        request_str = """SELECT * FROM """ + table_name + " WHERE id=?"
+        self.cursor.execute(request_str, (id,))
+        return self.cursor.fetchone()
 
     def delete_row(self, table, rows):
         request_str = "DELETE FROM " + table.name + " WHERE id=?;"

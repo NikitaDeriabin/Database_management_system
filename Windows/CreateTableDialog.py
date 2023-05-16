@@ -3,7 +3,6 @@ from tkinter import ttk
 from DataBase.DataTypes import DataType
 from DataBase.Table import Table
 from DataBase.Attribute import Attribute
-import constants as const
 from tkinter import messagebox as mb
 
 
@@ -63,10 +62,7 @@ class CreateTableDialog(tk.Toplevel):
         """
 
         for attr in table.attributes:
-            self.db_controller.cursor.execute("""INSERT INTO """ + const.attr_table + " (" + \
-                                const.attr_table_name + ", " + const.attr_table_column_name + ", " + \
-                                const.attr_table_type + ")" + " VALUES (?, ?, ?)",
-                                (attr.table_name, attr.name, attr.type))
+            self.db_controller.insert_attrs_to_attr_table(attr)
 
     def _create_table(self, table):
         attr_str = " (id integer primary key, "
@@ -85,7 +81,7 @@ class CreateTableDialog(tk.Toplevel):
         if not self._check_for_same_attr(table.attributes):
             raise Exception("There are common fields!")
 
-        self.db_controller.cursor.execute("""CREATE TABLE IF NOT EXISTS """ + table.name.replace(' ', '') + attr_str)
+        self.db_controller.create_table(table.name.replace(' ', ''), attr_str)
 
     def cancel(self):
         self.destroy()

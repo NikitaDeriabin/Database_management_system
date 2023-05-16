@@ -62,10 +62,7 @@ class TablesWindow(tk.Toplevel, BaseWindow):
 
     def delete_selected_table(self):
         selected = self._get_selected_item()
-        self.db_controller.cursor.execute("""DROP TABLE IF EXISTS """ + selected)
-        self.db_controller.cursor.execute("""DELETE FROM """ + const.attr_table + " WHERE " +
-                            const.attr_table_name + " = " + "?" + ";", (selected,))
-        self.db_controller.connection.commit()
+        self.db_controller.remove_table(selected)
         self.refresh()
 
     def refresh(self):
@@ -73,8 +70,7 @@ class TablesWindow(tk.Toplevel, BaseWindow):
 
     def display_tables(self):
         self.table_list_box.delete(0, tk.END)
-        self.db_controller.cursor.execute("""SELECT * FROM sqlite_master WHERE type='table'""")
-        self.tables = self.db_controller.cursor.fetchall()
+        self.tables = self.db_controller.get_tables()
         for tb in self.tables:
             if tb[1] != const.attr_table:
                 self.table_list_box.insert(tk.END, tb[1]) #tb[1] - name of table

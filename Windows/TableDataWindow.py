@@ -43,9 +43,8 @@ class TableDataWindow(tk.Toplevel, BaseWindow):
         btn_refresh_table.grid(row=0, column=3, ipadx=10, padx=10)
 
     def display_records(self):
-        self.db_controller.cursor.execute("""SELECT * FROM """ + self.table.name)
         [self.tree.delete(i) for i in self.tree.get_children()]
-        [self.tree.insert('', 'end', values=row) for row in self.db_controller.cursor.fetchall()]
+        [self.tree.insert('', 'end', values=row) for row in self.db_controller.get_rows(self.table.name)]
 
     def open_add_row_dialog(self):
         AddRowDialog(self.root, self.db_controller, self.table)

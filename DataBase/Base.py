@@ -44,32 +44,33 @@ class Base:
         table2 = self.db_controller.get_records(tbl2)
 
         table1_comm_attr_values = set()
-        for row in table1.rows:
-            for cell in row.cells:
-                if cell.name_attr.lower() == comm_attr.lower():
-                    table1_comm_attr_values.add(cell.val)
+        self._set_comm_attr_values(comm_attr, table1, table1_comm_attr_values)
 
         table2_comm_attr_values = set()
-        for row in table2.rows:
-            for cell in row.cells:
-                if cell.name_attr.lower() == comm_attr.lower():
-                    table2_comm_attr_values.add(cell.val)
+        self._set_comm_attr_values(comm_attr, table2, table2_comm_attr_values)
 
         result_comm_attr_values = table1_comm_attr_values & table2_comm_attr_values
 
         res_table = Table(tbl1 + " join " + tbl2)
 
-        for row1 in table1.rows:
-            for cell1 in row1.cells:
-                if cell1.name_attr.lower() == comm_attr.lower():
-                    if cell1.val in result_comm_attr_values:
-                        for row2 in table2.rows:
-                            for cell2 in row2.cells:
-                                if cell2.name_attr.lower() == comm_attr.lower():
-                                    if cell2.val == cell1.val:
-                                        res_table.add_row(concat_row(row1, row2))
+        self._fill_res_table(comm_attr, concat_row, res_table, result_comm_attr_values, table1, table2)
 
         return res_table
+
+    def _fill_res_table(self, comm_attr, concat_row, res_table, result_comm_attr_values, table1, table2):
+        for row1 in table1.rows:
+            for cell1 in row1.cells:
+                if cell1.name_attr.lower() == comm_attr.lower() and cell1.val in result_comm_attr_values:
+                    for row2 in table2.rows:
+                        for cell2 in row2.cells:
+                            if cell2.name_attr.lower() == comm_attr.lower() and cell2.val == cell1.val:
+                                res_table.add_row(concat_row(row1, row2))
+
+    def _set_comm_attr_values(self, comm_attr, table, table_comm_attr_values):
+        for row in table.rows:
+            for cell in row.cells:
+                if cell.name_attr.lower() == comm_attr.lower():
+                    table_comm_attr_values.add(cell.val)
 
     def create_table(self, table):
         self.tables.append(table)
