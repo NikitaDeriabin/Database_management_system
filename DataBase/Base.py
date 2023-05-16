@@ -1,5 +1,6 @@
 from DataBase.Table import Table
 import constants as const
+import itertools
 
 
 class Base:
@@ -58,18 +59,19 @@ class Base:
         return res_table
 
     def _fill_res_table(self, comm_attr, concat_row, res_table, result_comm_attr_values, table1, table2):
-        for row1 in table1.rows:
-            for cell1 in row1.cells:
-                if cell1.name_attr.lower() == comm_attr.lower() and cell1.val in result_comm_attr_values:
-                    for row2 in table2.rows:
-                        for cell2 in row2.cells:
-                            if cell2.name_attr.lower() == comm_attr.lower() and cell2.val == cell1.val:
-                                res_table.add_row(concat_row(row1, row2))
+        for row1, row2 in itertools.product(table1.rows, table2.rows):
+            for cell1, cell2 in itertools.product(row1.cells, row2.cells):
+                if self._is_mathcing_cell(cell1, comm_attr) and cell1.val in result_comm_attr_values and \
+                        self._is_mathcing_cell(cell2, comm_attr) and cell2.val == cell1.val:
+                    res_table.add_row(concat_row(row1, row2))
+
+    def _is_mathcing_cell(self, cell, comm_attr):
+        return cell.name_attr.lower() == comm_attr.lower()
 
     def _set_comm_attr_values(self, comm_attr, table, table_comm_attr_values):
         for row in table.rows:
             for cell in row.cells:
-                if cell.name_attr.lower() == comm_attr.lower():
+                if self._is_mathcing_cell(cell, comm_attr):
                     table_comm_attr_values.add(cell.val)
 
     def create_table(self, table):
